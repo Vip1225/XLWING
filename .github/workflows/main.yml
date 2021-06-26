@@ -21,6 +21,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
+        # pythonnet doesn't have wheels for 3.9 yet
         python-version: '3.8'
         architecture: 'x64'
     - name: Setup .NET Core
@@ -56,14 +57,14 @@ jobs:
         path: dist
 
   test:
-    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') && github.ref == 'refs/heads/master' }}
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     name: Test installation
     needs: build
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [macos-latest, windows-latest]
-        python-version: [3.6, 3.7, 3.8, 3.9]
+        python-version: ['3.6', '3.7', '3.8', '3.9', '3.10.0-alpha - 3.10']
         architecture: ['x64']
     steps:
       - uses: actions/checkout@v2
@@ -91,7 +92,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.8'
+          python-version: '3.9'
           architecture: 'x64'
       - name: Install Python dependencies
         run: |
